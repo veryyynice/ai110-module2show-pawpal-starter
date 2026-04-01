@@ -1,14 +1,16 @@
-# PawPal+ Class Diagram
+# PawPal+ — Final Class Diagram
 
 ```mermaid
 classDiagram
     class Owner {
         +String name
         +String contactInfo
-        +List~TimeBlock~ availableHours
+        +List~Tuple~ availableHours
         +String notificationPreference
+        +List~Pet~ pets
         +addPet(pet: Pet)
         +removePet(petId: String)
+        +getAllPets() List~Pet~
     }
 
     class Pet {
@@ -33,22 +35,27 @@ classDiagram
         +int priority
         +Time dueTime
         +bool isCompleted
-        +complete()
+        +markComplete()
     }
 
     class Scheduler {
-        +List~Pet~ pets
+        +Owner owner
         +List~Task~ tasks
         +addTask(task: Task)
         +removeTask(taskId: String)
-        +generateDailyPlan(owner: Owner) List~Task~
+        +getTasksForPet(pet: Pet) List~Task~
+        +getIncompleteTasks(pet: Pet) List~Task~
+        +sortByTime(tasks: List~Task~) List~Task~
+        +filterTasks(petName, completed) List~Task~
+        +completeTask(taskId: String) Task
+        +getConflicts() List~String~
         +checkConflicts() bool
+        +generateDailyPlan() List~Task~
         +sendReminder(task: Task)
-        +checkTaskCompletion(pet: Pet) List~Task~
     }
 
-    Owner "1" --> "1..*" Pet : owns
+    Owner "1" --> "0..*" Pet : owns
     Scheduler "1" --> "1" Owner : manages for
     Scheduler "1" --> "0..*" Task : owns
-    Task --> Pet : for
+    Task --> Pet : for (via petId)
 ```
